@@ -1,0 +1,10 @@
+# OS
+.DS_Store
+Thumbs.db
+# Editors
+.vscode/
+.idea/
+*.log
+# Node / Vercel (if tooling is added later)
+node_modules/
+.vercel
