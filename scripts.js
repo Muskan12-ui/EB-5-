@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
       slides[si].classList.remove('active');
       si = (si + 1) % slides.length;
       slides[si].classList.add('active');
-    }, 5000);
+    }, 6000);
   }
 
   document.querySelectorAll('.qa .q').forEach(function(q){
@@ -86,8 +86,9 @@ document.addEventListener('DOMContentLoaded', function () {
       if(bar) bar.style.width = ((n+1)/steps.length*100) + '%';
     }
     stepper.addEventListener('click', function(e){
-      if(e.target.matches('[data-next]')){ if(i < steps.length-1){ i++; show(i);} }
-      if(e.target.matches('[data-prev]')){ if(i>0){ i--; show(i);} }
+      if(e.target.closest('[data-next]')){ if(i < steps.length-1){ i++; show(i);} }
+      else if(e.target.closest('[data-prev]')){ if(i>0){ i--; show(i);} }
+      else if(e.target.closest('button[type="submit"]')){ e.preventDefault(); stepper.innerHTML='<div class="ok"><b>Thank you.</b> Based on your answers, a personal consultation is the best next step — our team will contact you confidentially.</div>'; }
     });
     show(0);
   }
