@@ -15,39 +15,72 @@ document.addEventListener('DOMContentLoaded', function () {
   var here = (location.pathname.split('/').pop() || 'index.html');
   document.querySelectorAll('.menu a').forEach(function(a){
     var href = a.getAttribute('href') || '';
-    if (href === here || (here === 'index.html' && href === 'index.html')) a.classList.add('active');
+    if (href === here) a.classList.add('active');
   });
+
+  var pbar = document.createElement('div');
+  pbar.className = 'progressbar';
+  document.body.appendChild(pbar);
+  function prog(){
+    var h = document.documentElement;
+    var m = h.scrollHeight - h.clientHeight;
+    pbar.style.width = (m > 0 ? (h.scrollTop / m * 100) : 0) + '%';
+  }
+  window.addEventListener('scroll', prog, {passive:true}); prog();
+
+  document.querySelectorAll('.stagger').forEach(function(c){
+    c.querySelectorAll('.reveal').forEach(function(el,i){ el.style.transitionDelay = (i*85) + 'ms'; });
+  });
+
+  function countEl(el){
+    if(el.__counted) return; el.__counted = true;
+    var t = parseFloat(el.dataset.target), pre = el.dataset.prefix||'', suf = el.dataset.suffix||'', dec = parseInt(el.dataset.dec||'0'), start=null;
+    function step(ts){
+      if(!start) start = ts;
+      var p = Math.min((ts-start)/1600, 1);
+      var v = (p*p*(3-2*p))*t;
+      el.textContent = pre + (dec>0 ? v.toFixed(dec) : Math.round(v).toLocaleString()) + suf;
+      if(p<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
 
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(e){
       if(e.isIntersecting){
         e.target.classList.add('in');
-        if(e.target.hasAttribute('data-stats')) runCount();
+        if(e.target.hasAttribute('data-target')) countEl(e.target);
+        if(e.target.querySelectorAll) e.target.querySelectorAll('[data-target]').forEach(function(n){ countEl(n); });
         io.unobserve(e.target);
       }
     });
   }, { threshold: 0.16 });
-  document.querySelectorAll('.reveal, [data-stats]').forEach(function(el){ io.observe(el); });
+  document.querySelectorAll('.reveal, [data-target]').forEach(function(el){ io.observe(el); });
   document.querySelectorAll('.hero .reveal, .phero .reveal').forEach(function(el){ el.classList.add('in'); });
 
-  var counted = false;
-  function runCount(){
-    if(counted) return; counted = true;
-    document.querySelectorAll('.num[data-target]').forEach(function(el){
-      var t = parseFloat(el.dataset.target), pre = el.dataset.prefix||'', suf = el.dataset.suffix||'', start=null;
-      function step(ts){
-        if(!start) start = ts;
-        var p = Math.min((ts-start)/1500, 1);
-        var v = Math.round(p*p*(3-2*p)*t);
-        el.textContent = pre + v.toLocaleString() + suf;
-        if(p<1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    });
-  }
+  document.querySelectorAll('[data-timeline]').forEach(function(tl){
+    var line = tl.querySelector('.tl-line');
+    var dots = tl.querySelectorAll('.tdot');
+    function draw(){
+      var r = tl.getBoundingClientRect();
+      var trigger = window.innerHeight * 0.82;
+      var h = Math.max(0, Math.min(r.height, trigger - r.top));
+      if(line) line.style.height = h + 'px';
+      dots.forEach(function(d){ d.classList.toggle('on', d.getBoundingClientRect().top < trigger); });
+    }
+    window.addEventListener('scroll', draw, {passive:true}); window.addEventListener('resize', draw); draw();
+  });
 
-  var sky = document.querySelector('.phero .skyline');
-  if(sky){ window.addEventListener('scroll', function(){ sky.style.transform = 'translateY(' + (window.scrollY*0.15) + 'px)'; }); }
+  document.querySelectorAll('.jtl').forEach(function(tl){
+    var line=tl.querySelector('.tl-line');
+    function jdraw(){
+      var r=tl.getBoundingClientRect();
+      var trig=window.innerHeight*0.62;
+      var h=Math.max(0,Math.min(r.height, trig - r.top));
+      if(line)line.style.height=h+'px';
+    }
+    window.addEventListener('scroll',jdraw,{passive:true}); window.addEventListener('resize',jdraw); jdraw();
+  });
 
   var slides = document.querySelectorAll('.hero-slide');
   if(slides.length > 1){
@@ -102,6 +135,28 @@ document.addEventListener('DOMContentLoaded', function () {
       f.innerHTML = ''; f.appendChild(box);
     });
   });
+
+  var cd = document.querySelector('.countdown[data-deadline]');
+  if(cd){
+    var cdT = new Date(cd.getAttribute('data-deadline')).getTime();
+    var eD=document.getElementById('cdD'),eH=document.getElementById('cdH'),eM=document.getElementById('cdM'),eS=document.getElementById('cdS');
+    var cdTimer;
+    function cpad(n){return (n<10?'0':'')+n;}
+    function ctick(){
+      var diff=cdT-Date.now();
+      if(diff<=0){
+        if(cdTimer) clearInterval(cdTimer);
+        cd.classList.add('cd-passed');
+        cd.innerHTML='<div class="cd-text"><span class="cd-eye">A note on timing</span><b>The 30 September 2026 filing window has passed. Speak with us for the current EB-5 rules and investment amounts.</b></div><a class="btn btn-gold" href="contact.html">Talk to an advisor <span class="arr">&rarr;</span></a>';
+        return;
+      }
+      if(eD)eD.textContent=Math.floor(diff/86400000);
+      if(eH)eH.textContent=cpad(Math.floor(diff/3600000)%24);
+      if(eM)eM.textContent=cpad(Math.floor(diff/60000)%60);
+      if(eS)eS.textContent=cpad(Math.floor(diff/1000)%60);
+    }
+    ctick(); cdTimer=setInterval(ctick,1000);
+  }
 
   var y = document.getElementById('yr'); if(y) y.textContent = new Date().getFullYear();
 });
