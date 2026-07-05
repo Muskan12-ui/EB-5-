@@ -71,13 +71,13 @@ header .wrap{max-width:100%;padding:0 clamp(20px,4vw,52px)}
 .micro{color:#6b7890;font-size:13px;letter-spacing:1px;margin-top:24px}
 
 /* --- inner page hero --- */
-.phero{position:relative;background:linear-gradient(120deg,#305d9c,#5085c4);color:#fff;padding:150px 0 66px;overflow:hidden}
+.phero{position:relative;background:linear-gradient(120deg,#305d9c,#5085c4);color:#fff;padding:150px 0 66px;overflow:hidden;min-height:420px;display:flex;align-items:flex-end}
 .phero .skyline{position:absolute;right:0;bottom:0;width:52%;height:70%;opacity:.5;z-index:0}
-.phero .wrap{position:relative;z-index:2}
+.phero .wrap{position:relative;z-index:2;width:100%}
 .phero .crumb{color:#9fb0c8;font-size:12.5px;letter-spacing:1px;margin-bottom:14px}
 .phero .crumb a:hover{color:var(--gold-s)}
-.phero h1{color:#fff;font-size:46px;max-width:800px;margin-top:8px}
-.phero p{color:#cfd6e3;font-size:17px;max-width:640px;margin-top:16px;font-weight:300}
+.phero h1{color:#fff;font-size:46px;max-width:800px;margin-top:8px;transition:transform .1s ease-out;will-change:transform}
+.phero p{color:#cfd6e3;font-size:17px;max-width:640px;margin-top:16px;font-weight:300;transition:transform .1s ease-out;will-change:transform}
 
 /* --- trust bar + marquee --- */
 .trustbar{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff}
@@ -145,8 +145,8 @@ section{padding:100px 0}
 .tl-row p{color:var(--slate);font-size:14.5px}
 
 /* --- proof strip --- */
-.proof{background:var(--navy);color:#fff;border-left:3px solid var(--gold);padding:28px 32px;border-radius:8px;margin-top:32px}
-.proof .big{font-family:'Lora',serif;color:var(--gold);font-size:24px;font-weight:700}
+.proof{background:var(--navy-2);color:#fff;border-left:3px solid var(--gold-s);padding:28px 32px;border-radius:8px;margin-top:32px}
+.proof .big{font-family:'Lora',serif;color:var(--gold-s);font-size:24px;font-weight:700}
 .proof .rk{color:#aeb6c4;font-size:12px;font-style:italic;margin-top:12px;line-height:1.5}
 
 /* --- beyond --- */
@@ -232,6 +232,7 @@ footer{background:var(--navy-d);color:#aeb6c4;padding:60px 0 26px}
   .menu-only{display:inline-flex;margin-top:12px}
   .brand{flex:none}
   .hero h1{font-size:38px}.phero h1{font-size:32px}
+  .phero{min-height:300px}
   .stats .row,.grid-3,.grid-2,.tiles,.cols-3,.beyond .grid{grid-template-columns:1fr;gap:16px}
   .stat,.cols-3 .col{border-left:none;padding-left:0}
   section{padding:64px 0}
@@ -244,16 +245,17 @@ footer{background:var(--navy-d);color:#aeb6c4;padding:60px 0 26px}
 @keyframes kenphero{from{transform:scale(1.03)}to{transform:scale(1.16) translate(-1.5%,-1%)}}
 .phero>.skyline{display:none}
 .phero .wrap{position:relative;z-index:2}
-.card{transition:transform .32s ease,box-shadow .32s ease,border-color .32s ease}
+.card{transition:transform .32s ease,box-shadow .32s ease,border-color .32s ease;perspective:800px}
 .card:hover{transform:translateY(-7px);box-shadow:0 20px 46px rgba(16,34,68,.17);border-top-color:var(--gold)}
 .tile{transition:transform .3s ease,box-shadow .3s ease}
 .tile:hover{transform:translateY(-5px);box-shadow:0 16px 38px rgba(16,34,68,.15)}
 .step{transition:transform .3s ease}
 .step:hover{transform:translateX(7px)}
-.tl-row{transition:background .3s ease}
-.tl-row:hover{background:rgba(64,116,184,.07)}
+.tl-row{transition:background .3s ease,padding-left .3s ease}
+.tl-row:hover{background:rgba(64,116,184,.07);padding-left:8px}
 .ctable tr{transition:background .25s ease}
 .ctable tr:hover td{background:#e9f1fb}
+.ctable tr:hover td:first-child{border-left:3px solid var(--gold)}
 .btn{transition:transform .25s ease,box-shadow .3s ease,filter .25s ease}
 .progressbar{position:fixed;top:0;left:0;height:3px;width:0;background:var(--gold);z-index:100;transition:width .12s linear}
 [data-timeline]{position:relative;padding-left:40px}
@@ -261,6 +263,67 @@ footer{background:var(--navy-d);color:#aeb6c4;padding:60px 0 26px}
 [data-timeline] .tl-line{position:absolute;left:12px;top:8px;width:2px;height:0;background:var(--gold);z-index:1}
 [data-timeline] .tl-row,[data-timeline] .step{position:relative}
 @media(max-width:900px){[data-timeline]{padding-left:30px}}
+
+/* ===== eyebrow slide-in ===== */
+.js .eyebrow.reveal{opacity:0;transform:translateX(-30px)}
+.eyebrow.reveal.in{opacity:1;transform:translateX(0)}
+
+/* ===== staggered delays (extended) ===== */
+.d5{transition-delay:.58s}.d6{transition-delay:.7s}
+
+/* ===== table row-by-row reveal ===== */
+.ctable.reveal-rows tr{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}
+.ctable.reveal-rows tr.in{opacity:1;transform:none}
+
+/* ===== CTA band shimmer ===== */
+.ctaband{position:relative;overflow:hidden}
+.ctaband::after{content:"";position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.08) 50%,transparent 62%);animation:ctashimmer 5s ease-in-out infinite}
+@keyframes ctashimmer{0%,100%{left:-80%}50%{left:120%}}
+
+/* ===== prose link underline animation ===== */
+.prose a{color:var(--navy);position:relative;text-decoration:none}
+.prose a::after{content:"";position:absolute;left:0;bottom:-1px;width:0;height:1.5px;background:var(--gold);transition:width .3s ease}
+.prose a:hover::after{width:100%}
+
+/* ===== typewriter effect (about page quote) ===== */
+.typewriter{overflow:hidden;border-right:2px solid var(--gold);white-space:normal;display:inline}
+.typewriter.typing{animation:blink-caret .72s step-end infinite}
+.typewriter.done{border-right-color:transparent}
+@keyframes blink-caret{from,to{border-color:var(--gold)}50%{border-color:transparent}}
+
+/* ===== leadership card flip ===== */
+.card-flip{position:relative;perspective:1000px;min-height:280px}
+.card-flip .card-front,.card-flip .card-back{border-radius:8px;padding:26px 24px;backface-visibility:hidden;transition:transform .6s ease}
+.card-flip .card-front{background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);position:relative;z-index:2}
+.card-flip .card-back{position:absolute;inset:0;background:var(--navy);color:#fff;border-radius:8px;transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:center;padding:30px 28px}
+.card-flip .card-back h4{color:var(--gold-s);font-family:'Lora',serif;font-size:16px;margin-bottom:10px}
+.card-flip .card-back p{color:#d1daf0;font-size:14px;line-height:1.6}
+.card-flip .card-back .flip-hint{color:var(--gold-s);font-size:11px;margin-top:14px;letter-spacing:1px;text-transform:uppercase}
+.card-flip:hover .card-front{transform:rotateY(180deg)}
+.card-flip:hover .card-back{transform:rotateY(0)}
+
+/* ===== enhanced timeline nodes (about page) ===== */
+.timeline[data-timeline] .tl-row.in .yr::before{animation:node-pulse .6s ease forwards}
+@keyframes node-pulse{0%{box-shadow:0 0 0 0 rgba(255,0,0,.4)}70%{box-shadow:0 0 0 10px rgba(255,0,0,0)}100%{box-shadow:0 0 0 0 rgba(255,0,0,0)}}
+
+/* ===== heritage counter ===== */
+.heritage-counter{display:inline-flex;align-items:baseline;gap:8px}
+.heritage-counter .hc-num{font-family:'Lora',serif;font-weight:700;font-size:58px;color:var(--gold);line-height:1}
+.heritage-counter .hc-label{font-family:'Lora',serif;font-size:22px;color:var(--navy);font-weight:600}
+
+/* ===== journey step active highlight ===== */
+.jstep.j-active .jtxt{border-left:3px solid var(--gold);padding-left:16px}
+.jstep.rev.j-active .jtxt{border-left:none;border-right:3px solid var(--gold);padding-right:16px}
+.jstep .jtxt{transition:border .3s ease,padding .3s ease}
+.jstep:hover .jtxt p{max-height:200px}
+
+/* ===== gaincard mouse-move parallax ===== */
+.gaincard .gc-img{transition:transform .7s ease}
+.gaincard[data-parallax] .gc-img{will-change:transform}
+
+/* ===== proof strip counter ===== */
+.proof .big[data-target]{transition:color .3s ease}
+.proof .big.counted{color:var(--gold-s)}
 
 /* ===== family-gains image cards ===== */
 .gaincard{position:relative;display:block;min-height:312px;border-radius:14px;overflow:hidden;color:#fff;box-shadow:0 10px 30px rgba(16,34,68,.14);transition:transform .4s ease,box-shadow .4s ease}
