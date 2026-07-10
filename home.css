@@ -76,7 +76,7 @@
 
 /* ===== SECTIONS ===== */
 section {
-  padding: 110px 0;
+  /* padding: 110px 0; */
 }
 .sec-head h2 {
   font-size: 36px;
